@@ -1,0 +1,55 @@
+(load "table.scm")
+
+(define (environment vars parent)
+  (define vars (table/make))
+
+  (define (contains? key) 
+    (if (table/contains? vars key) 
+      true
+      (env/contains? parent key)))
+  
+  (define (set-variable! key value)
+    (cond ((table/contains? vars key) (table/insert! vars key value))
+	  ((env/contains? parent key) (env/set-variable! key value))
+	  (else (error "Variable is not defined!" key))))
+  
+  (define (define! key value)
+    (table/insert! vars key value))
+
+  (define (value key)
+    (if (table/contains? vars key)
+      (table/value vars key)
+      (env/value parent key)))
+
+  (define (dispatch m)
+    (cond ((eq? m 'set-variable!) set-variable!)
+	  ((eq? m 'contains?) contains?)
+	  ((eq? m 'define!) define!)
+	  ((eq? m 'value) value)
+	  (else (error "Invalid message for env" m))))
+  dispatch)
+
+(define (env/empty) '())
+(define env/empty? null?)
+(define (env/extend vars env)
+  (let ((keys (map car vars))
+	(vals (map cdr vars)))
+    (if (= (length keys) (length vals))
+      (environment vars env))))
+(define (env/set! env key value)
+  (if (env/empty? env) 
+    (error "Invalid environment!")
+    ((env 'set-variable!) key value)))
+(define (env/define! env key value)
+  (if (env/empty? env)
+    (error "Invalid environment!")
+    ((env 'define!) key value)))
+(define (env/value env key)
+  (if (env/empty? env)
+    (error "Variable is not defined in environment" key)
+    ((env 'value) key)))
+(define (env/contains? env key)
+  (if (env/empty? env)
+    false
+    ((env 'contains?) key)))
+

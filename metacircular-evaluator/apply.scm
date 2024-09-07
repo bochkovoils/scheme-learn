@@ -1,0 +1,11 @@
+(load "procedures.scm")
+
+(define (*apply expr env)
+  (let* ((evaluated (map (lambda (e) (evaluate e env)) expr))
+	 (procedure (car evaluated))
+	 (args      (cdr evaluated)))
+    (cond ((procedure/primitive? procedure) (apply-in-lower-scheme procedure args))
+	  ((procedure/compound?  procedure)
+	   (let ((extended-env (env/extend (map (lambda (lst) (cons (car lst) (cadr lst))) (procedure/params procedure) args) env)))
+	     (for-each (lambda (procedure-expr) (evaluate procedure-expr extended-env) (procedure/body procedure)))))
+	  (else (error "Invalid apply-expression" expr)))))
