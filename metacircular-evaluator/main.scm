@@ -2,6 +2,7 @@
 (load "env.scm")
 (load "procedures.scm")
 (load "define.scm")
+(load "set.scm")
 
 (define (main-loop) 
   (define global-env (env/extend '() (env/empty)))
