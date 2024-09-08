@@ -1,5 +1,5 @@
 (load "table.scm")
-;(load "utils.scm")
+(load "apply.scm")
 
 (define symbol/is? symbol?)
 (define (symbol/eval expr env) (env/value env expr))
@@ -21,9 +21,10 @@
 
   (define (evaluate expr env)
     (let ((eval-fn (find-operation-for-expr expr)))
+      ;(display expr)
       (if eval-fn
 	(eval-fn expr env)
-	(error "There is not handler for" expr))))
+	(*apply expr env))))
 
   (define (dispatch m)
     (cond ((eq? m 'set-handler!) set-handler!)
@@ -37,3 +38,4 @@
 (define global-evaluator (evaluator))
 (define (evaluate expr env)
   (evaluator/eval global-evaluator expr env))
+

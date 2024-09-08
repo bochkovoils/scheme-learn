@@ -1,7 +1,8 @@
-(load "table.scm")
+;(load "table.scm")
 
-(define (environment vars parent)
+(define (environment vars-i parent)
   (define vars (table/make))
+  (for-each (lambda (pair) (table/insert! vars (car pair) (cdr pair))) vars-i)
 
   (define (contains? key) 
     (if (table/contains? vars key) 
@@ -21,11 +22,14 @@
       (table/value vars key)
       (env/value parent key)))
 
+  (define (vars-names) (cons (table/keys vars) (env/vars parent)))
+
   (define (dispatch m)
     (cond ((eq? m 'set-variable!) set-variable!)
 	  ((eq? m 'contains?) contains?)
 	  ((eq? m 'define!) define!)
 	  ((eq? m 'value) value)
+	  ((eq? m 'vars) vars-names)
 	  (else (error "Invalid message for env" m))))
   dispatch)
 
@@ -52,4 +56,5 @@
   (if (env/empty? env)
     false
     ((env 'contains?) key)))
-
+(define (env/vars env)
+  (if (env/empty? env) '() ((env 'vars))))

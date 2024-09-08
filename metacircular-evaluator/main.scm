@@ -1,8 +1,12 @@
 (load "eval.scm")
 (load "env.scm")
+(load "procedures.scm")
+(load "define.scm")
 
 (define (main-loop) 
   (define global-env (env/extend '() (env/empty)))
+  (procedure/extend-global global-env)
+  
   (define (display-prompt) (display "| "))
 
   (define (write-string str)
