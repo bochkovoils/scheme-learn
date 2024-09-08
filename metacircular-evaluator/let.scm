@@ -1,0 +1,20 @@
+(define (let/is? expr) (tagged-list? expr 'let))
+(define (let/body expr) (cddr expr))
+(define (let/symbols expr) (map car (cadr expr)))
+(define (let/blocks expr) (cadr expr))
+(define (let/eval-block lst env)
+  (let ((symbol (car lst))
+	(body (cadr lst)))
+    (cons symbol (evaluate body env))))
+(define (let/eval expr env) 
+  (define (eval-blocks exprs env)
+    (if (null? (cdr exprs))
+      (evaluate (car exprs) env)
+      (begin
+	(evaluate (car exprs) env)
+	(eval-blocks (cdr exprs) env))))
+  (let ((extended-env (env/extend (map (lambda (x) (let/eval-block x env)) (let/blocks expr)) env)))
+    (eval-blocks (let/body expr) extended-env)))
+
+(evaluator/set-handler! global-evaluator let/is? let/eval)
+

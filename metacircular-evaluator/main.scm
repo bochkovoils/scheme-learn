@@ -8,6 +8,7 @@
 (load "quote.scm")
 (load "cond.scm")
 (load "begin.scm")
+(load "let.scm")
 
 (define (main-loop) 
   (define global-env (env/extend '() (env/empty)))
