@@ -9,6 +9,7 @@
 (load "cond.scm")
 (load "begin.scm")
 (load "let.scm")
+(load "lambda.scm")
 
 (define (main-loop) 
   (define global-env (env/extend '() (env/empty)))
