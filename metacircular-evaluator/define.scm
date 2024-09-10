@@ -11,7 +11,7 @@
     (caddr expr)))
 (define (define/eval expr env)
   (if (define/procedure? expr)
-    (env/define! env (define/name expr) (procedure/make (define/params expr) (define/body expr)))
+    (env/define! env (define/name expr) (procedure/make (define/params expr) (define/body expr) env))
     (env/define! env (define/name expr) (evaluate (define/body expr) env)))
   '())
 

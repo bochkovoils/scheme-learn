@@ -16,11 +16,13 @@
 (define (procedure/compound? proc)
   (tagged-list? proc 'procedure))
 
-(define (procedure/make params body)
-  (list 'procedure params body))
+(define (procedure/make params body original-env)
+  (list 'procedure params body original-env))
 
 (define (procedure/params proc) (cadr proc))
 (define (procedure/body proc) (caddr proc))
+(define (procedure/env proc) (cadddr proc))
+
 (define (procedure/extend-global env)
   (for-each 
     (lambda (primitive-proc) (env/define! env (car primitive-proc) (list 'primitive-procedure (car primitive-proc) (cdr primitive-proc))))
